@@ -1,0 +1,285 @@
+
+Images_HD.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+GuiOverlay
+  rotate: false
+  xy: 1, 35
+  size: 1280, 960
+  orig: 1280, 960
+  offset: 0, 0
+  index: -1
+Button_BLANK
+  rotate: false
+  xy: 1283, 875
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+Button_D
+  rotate: false
+  xy: 1283, 753
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+Button_Jump
+  rotate: false
+  xy: 1405, 875
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+Button_L
+  rotate: false
+  xy: 1283, 631
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+Button_Pause
+  rotate: false
+  xy: 1405, 753
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+Button_R
+  rotate: false
+  xy: 1527, 875
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+Button_Select
+  rotate: false
+  xy: 1283, 509
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+Button_U
+  rotate: false
+  xy: 1405, 631
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+Button_Attack
+  rotate: false
+  xy: 1527, 753
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+PlayerFrames_R
+  rotate: false
+  xy: 1649, 851
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_U
+  rotate: false
+  xy: 1283, 363
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_D
+  rotate: false
+  xy: 1723, 851
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_BLANK
+  rotate: false
+  xy: 1283, 217
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_DR
+  rotate: false
+  xy: 1797, 851
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_UR
+  rotate: false
+  xy: 1283, 71
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_W1
+  rotate: false
+  xy: 1871, 851
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_W2
+  rotate: false
+  xy: 1945, 851
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_W3
+  rotate: false
+  xy: 1405, 485
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_W4
+  rotate: false
+  xy: 1527, 607
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_W5
+  rotate: false
+  xy: 1601, 607
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_W6
+  rotate: false
+  xy: 1357, 339
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_cBLANK
+  rotate: false
+  xy: 1357, 193
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_cR
+  rotate: false
+  xy: 1357, 47
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_cW1
+  rotate: false
+  xy: 1431, 339
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_cW2
+  rotate: false
+  xy: 1431, 193
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_cW3
+  rotate: false
+  xy: 1431, 47
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+ground
+  rotate: false
+  xy: 1649, 785
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+PlayerFrames_cW4
+  rotate: false
+  xy: 1675, 639
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+Ground_SlopeLeft
+  rotate: false
+  xy: 1715, 785
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+PlayerFrames_cW5
+  rotate: false
+  xy: 1749, 639
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+Ground_SlopeRight
+  rotate: false
+  xy: 1781, 785
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+PlayerFrames_cW6
+  rotate: false
+  xy: 1823, 639
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+Ground_JumpThru
+  rotate: false
+  xy: 1847, 785
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+PlayerFrames_cU
+  rotate: false
+  xy: 1897, 639
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+Sign
+  rotate: false
+  xy: 1913, 785
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+PlayerFrames_cD
+  rotate: false
+  xy: 1971, 639
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_cDR
+  rotate: false
+  xy: 1675, 493
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+PlayerFrames_cUR
+  rotate: false
+  xy: 1749, 493
+  size: 72, 144
+  orig: 72, 144
+  offset: 0, 0
+  index: -1
+Blank
+  rotate: false
+  xy: 1, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

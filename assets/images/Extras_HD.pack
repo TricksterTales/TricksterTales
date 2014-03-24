@@ -1,0 +1,12 @@
+
+Extras_HD.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+TileableMountainsScaled
+  rotate: false
+  xy: 1, 1
+  size: 1920, 960
+  orig: 1920, 960
+  offset: 0, 0
+  index: -1
