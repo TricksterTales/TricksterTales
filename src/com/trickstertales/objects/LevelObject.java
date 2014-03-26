@@ -22,6 +22,7 @@ public class LevelObject {
 	public double animationTimer = 0.0, animationDuration = 0.0, animationDelay = 0.0;
 	protected boolean isOffScreen = false, shouldDie = false;
 	protected boolean canceled = true;
+	protected int _id = -1;
 	
 	public LevelObject(double x, double y, double width, double height, Level level) {
 		animleftx = gameleftx = x;
@@ -50,6 +51,9 @@ public class LevelObject {
 		animationTimer = 0.0;
 		animationDuration = duration;
 	}
+	
+	public void setId(int id) { _id = id; }
+	public int getId() { return _id; }
 	
 	public boolean clicked() {
 		if(!canceled)

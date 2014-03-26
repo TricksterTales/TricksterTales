@@ -64,5 +64,7 @@ public class Constant {
 	public static final double CLOUD_MINSPEED = 20;
 	
 	public static final double BLINK_TIME = 0.5;
+	
+	public static final String SAVE_AUTO = "/saves/auto.sav";
 
 }

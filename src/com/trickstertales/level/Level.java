@@ -60,8 +60,53 @@ public class Level {
 	}
 	
 	public void setPlayer(Player player) { this.player = player; }
+	public Player getPlayer() { return this.player; }
 	public void setBackground(LayerController back) { bg = back; if(bg != null) { bg.setLevel(this); } }
 	public void setForeground(LayerController fore) { fg = fore; if(fg != null) { fg.setLevel(this); } }
+	
+	public void loadObjects(String file) {
+		if(file == null)
+			return;
+		if(file.length() == 0)
+			return;
+		try {
+			InputStream in = (Gdx.files.internal(file)).read();
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			String line;
+			String[] stuff;
+			int xpos,ypos,pos,bsize = this.blocksize, num = 0;
+			double spx,spy,animdelay;
+			LevelObject obj;
+			while((line = br.readLine()) != null) {
+				stuff = line.split("\\s+");
+				if(stuff.length != 3) {
+					continue;
+				}
+				xpos = Integer.parseInt(stuff[1]);
+				ypos = Integer.parseInt(stuff[2]);
+				pos = xpos + ypos * width;
+				if(pos < 0 || pos > tileObjects.length) {
+					continue;
+				}
+        		spx = xpos * bsize;
+        		spy = viewmaxy + 20;
+        		animdelay = Maths.randomDouble(Constant.TWEENDELAYMIN, Constant.TWEENDELAYMAX);
+				switch(stuff[0].toLowerCase()) {
+				case "sign":
+	        		obj = new Sign(xpos * bsize, ypos * bsize, bsize, bsize, this);
+	        		obj.setId(num++);
+	        		obj.setAnimation(spx,spy, Constant.TWEENDURATIONPERPIXEL);
+	        		obj.delayAnimation(animdelay);
+	        		tileObjects[pos] = obj;
+	        		break;
+				default:
+					break;
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public void loadData(String file) {
 		if(file == null)
@@ -90,11 +135,6 @@ public class Level {
 		        		tiles[pos] = new Ground(col * bsize, row * bsize, bsize, bsize, this);
 		        		tiles[pos].setAnimation(spx,spy, Constant.TWEENDURATIONPERPIXEL);
 		        		tiles[pos].delayAnimation(animdelay);
-		        		break;
-		        	case 's':
-		        		tileObjects[pos] = new Sign(col * bsize, row * bsize, bsize, bsize, this);
-		        		tileObjects[pos].setAnimation(spx,spy, Constant.TWEENDURATIONPERPIXEL);
-		        		tileObjects[pos].delayAnimation(animdelay);
 		        		break;
 		        	case '_':
 		        		tiles[pos] = new JumpThru(col * bsize, row * bsize, bsize, bsize, this);

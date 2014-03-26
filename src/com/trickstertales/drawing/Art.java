@@ -18,7 +18,7 @@ import com.trickstertales.view.WorldRenderer;
 
 public class Art {
 	
-	public static final double scaleHD = 1.5;
+	public static final double scaleHD = 1.45;
 	public static float PPI = 1.0f;
 	
 	private static int strokeWidth = 1;
@@ -88,6 +88,15 @@ public class Art {
 	public static void drawTransparent() {
 		Gdx.graphics.getGL10().glEnable(GL10.GL_BLEND);
 	}
+
+	public static void loadArt(boolean isHD) {
+		if(isHD == usingHD && loadedOnce == true)
+			return;
+		usingHD = isHD;
+		//System.out.println((usingHD)?"Now HD":"NotHD");
+		loadArt();
+	}
+	public static boolean isHD() { return usingHD; }
 	
 	public static void loadManager() {
 		if(manager != null)
@@ -274,14 +283,6 @@ public class Art {
 			walkframescL[i].flip(true, false);
 		}
 	}
-	public static void loadArt(boolean isHD) {
-		if(isHD == usingHD && loadedOnce == true)
-			return;
-		usingHD = isHD;
-		//System.out.println((usingHD)?"Now HD":"NotHD");
-		loadArt();
-	}
-	public static boolean isHD() { return usingHD; }
 
 	public static void drawImage(SpriteBatch sb, TextureRegion tex, double xpos, double ypos, double width, double height) {
 		if(sb == null || tex == null)

@@ -78,7 +78,6 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 	
 	public void pause() {
-		Art.clearManager();
 		if(gsm != null)
 			gsm.pause();
 	}

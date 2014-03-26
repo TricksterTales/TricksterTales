@@ -45,6 +45,8 @@ public class GameStateManager {
 	
 	public int getState() { return activeState; }
 	public void setState(int st) {
+		if(isPaused)
+			unpause();
 		switch(st) {
 		case PLAYSTATE:
 			activeState = st;

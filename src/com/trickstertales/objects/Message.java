@@ -36,6 +36,7 @@ public class Message extends LevelObject {
 	
 	public void drawSelfAt(WorldRenderer render, double x, double y, boolean debug) {
 		double s = Art.FONT.charWidth;
+		(Art.FONT).setColor(Art.COLOR_PAUSENORMAL);
 		(Art.FONT).setSize(size);
 		Art.drawBubble(render, Art.FONT, x, y, msg);
 		(Art.FONT).setSize(s);

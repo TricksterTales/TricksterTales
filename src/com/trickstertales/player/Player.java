@@ -72,6 +72,7 @@ public class Player extends Walkable {
 		if(ducking == false)
 			crouchTime = 0;
 	}
+	public boolean getDucking() { return isDucking; }
 	
 	public void update(double dt) {
 		tooFarAway(Constant.PLAYER_AWAYDIST, Constant.PLAYER_TOOFAR, dt);
@@ -145,7 +146,8 @@ public class Player extends Walkable {
 		double bor = 6;
 		x -= bor; y -= bor;
 		if(isAnimating || level.doneAnimating() == false) {
-			Art.drawImage(render.spriteBatch, Art.PLAYER_IDLER, x, y, gamerightx - gameleftx + 2 * bor, standingHeight + 2 * bor);
+			Art.drawImage(render.spriteBatch, (isDucking)?Art.PLAYER_cIDLER:Art.PLAYER_IDLER,
+					x, y, gamerightx - gameleftx + 2 * bor, standingHeight + 2 * bor);
 			if(debug) {
 				x += bor; y += bor;
 				(render.spriteBatch).end();

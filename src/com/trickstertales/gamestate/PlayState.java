@@ -2,6 +2,7 @@ package com.trickstertales.gamestate;
 
 
 
+import com.trickstertales.backup.Data;
 import com.trickstertales.drawing.Art;
 import com.trickstertales.handlers.TouchHandler;
 import com.trickstertales.layers.CloudLayer;
@@ -44,11 +45,26 @@ public class PlayState extends GameState {
 		super(proj, true);
 		
 		curLevel = new Level01();
-		player = new Player(Constant.PLAYER_STARTX, Constant.PLAYER_STARTY,
-				Constant.PLAYER_WIDTH, Constant.PLAYER_HEIGHT, Constant.PLAYER_HEIGHTDUCK, curLevel);
-		player.setAbsoluteAnimation(Constant.PLAYER_SPAWNX, Constant.PLAYER_SPAWNY, Constant.PLAYERTWEEN);
+		double sx = Constant.PLAYER_STARTX, sy = Constant.PLAYER_STARTY;
+		if(Data.loadValue("justLoaded") == ""+true) {
+			sx = Double.parseDouble(Data.loadValue("playerx"));
+			sy = Double.parseDouble(Data.loadValue("playery"));
+			curLevel.viewx = Double.parseDouble(Data.loadValue("viewx"));
+			curLevel.viewy = Double.parseDouble(Data.loadValue("viewy"));
+		}
+		player = new Player(sx, sy, Constant.PLAYER_WIDTH, Constant.PLAYER_HEIGHT, Constant.PLAYER_HEIGHTDUCK, curLevel);
+		player.setAbsoluteAnimation(Constant.PLAYER_SPAWNX + curLevel.viewx,
+				Constant.PLAYER_SPAWNY + curLevel.viewy, Constant.PLAYERTWEEN);
 		player.delayAnimation(Constant.PLAYERTWEENDELAY);
 		curLevel.setPlayer(player);
+		
+		if(Data.loadValue("justLoaded") == ""+true) {
+			if(Data.loadValue("ducking") == ""+true) {
+				player.setDucking(true);
+				player.setDucking(false);
+			}
+			Data.saveValue("justLoaded", false);
+		}
 		
 		bgs = new LayerController();
 		bg1 = new Layer(Art.MOUNTAINS_SCALED, 0.85);

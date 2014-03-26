@@ -8,6 +8,7 @@ public class Level01 extends Level {
 		super(50, Constant.LEVEL_HEIGHT, Constant.BLOCK_SIZE);
 		
 		loadData("levels/Level01.txt");
+		loadObjects("levels/Level01_Objects.txt");
 	}
 
 }
