@@ -9,6 +9,7 @@ public class Constant {
 	
 	public static final boolean IS_PC = !(Gdx.app.getType().equals(ApplicationType.iOS) ||
 			Gdx.app.getType().equals(ApplicationType.Android));
+	public static final String LOCAL_DIR = Gdx.files.getLocalStoragePath();
 	
 	public static final double APPLET_SCALE = 1.0;
 	public static final int APPLET_WIDTH = 768;
@@ -65,6 +66,6 @@ public class Constant {
 	
 	public static final double BLINK_TIME = 0.5;
 	
-	public static final String SAVE_AUTO = "/saves/auto.sav";
+	public static final String SAVE_AUTO = "saves/auto.sav";
 
 }
