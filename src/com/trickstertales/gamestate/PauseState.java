@@ -127,11 +127,6 @@ public class PauseState extends GameState {
 			gsm.unpause();
 			break;
 		case selectSave:
-			Data.saveValue("playerx", gsm.getPlayer().gameleftx);
-			Data.saveValue("playery", gsm.getPlayer().gamebottomy);
-			Data.saveValue("viewx", gsm.getX());
-			Data.saveValue("viewy", gsm.getY());
-			Data.saveValue("ducking", gsm.getPlayer().getDucking());
 			Data.backupData(Constant.SAVE_AUTO);
 			break;
 		case selectLoad:
