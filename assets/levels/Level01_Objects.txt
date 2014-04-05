@@ -1,2 +1,4 @@
 Sign 46 9
 Sign 4 5
+Door 27 10 goal spawn
+Door 1 1 spawn goal
