@@ -16,6 +16,7 @@ public class Message extends LevelObject {
 
 	public Message(Level level, LevelObject par, double x, double y, String message, double size) {
 		super(x, y, 0, 0, level);
+		data = "message_" + message;
 		level.addTop(this);
 		this.size = size;
 		this.msg = message;

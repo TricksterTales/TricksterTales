@@ -6,11 +6,15 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.trickstertales.exceptions.NoCollisionException;
 import com.trickstertales.exceptions.SlopeAdjustFailed;
+import com.trickstertales.gamestate.PlayState;
 import com.trickstertales.layers.LayerController;
 import com.trickstertales.math.Constant;
 import com.trickstertales.math.Maths;
+import com.trickstertales.math.Point2D;
+import com.trickstertales.objects.Door;
 import com.trickstertales.objects.Ground;
 import com.trickstertales.objects.JumpThru;
 import com.trickstertales.objects.LevelObject;
@@ -41,7 +45,13 @@ public class Level {
 	protected LayerController bg;
 	protected LayerController fg;
 	
-	public Level(int width, int height, int blocksize) {
+	private PlayState plSt;
+	private final int myNum;
+	
+	public Level(PlayState ps, int lvlNum, int width, int height, int blocksize) {
+		plSt = ps;
+		myNum = lvlNum;
+		
 		this.width = width;
 		this.height = height;
 		this.blocksize = blocksize;
@@ -63,6 +73,7 @@ public class Level {
 	public Player getPlayer() { return this.player; }
 	public void setBackground(LayerController back) { bg = back; if(bg != null) { bg.setLevel(this); } }
 	public void setForeground(LayerController fore) { fg = fore; if(fg != null) { fg.setLevel(this); } }
+	public int getNum() { return myNum; }
 	
 	public void loadObjects(String file) {
 		if(file == null)
@@ -74,31 +85,56 @@ public class Level {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			String line;
 			String[] stuff;
-			int xpos,ypos,pos,bsize = this.blocksize, num = 0;
+			int xpos,ypos,pos,bsize = this.blocksize;
 			double spx,spy,animdelay;
 			LevelObject obj;
 			while((line = br.readLine()) != null) {
 				stuff = line.split("\\s+");
-				if(stuff.length != 3) {
+				if(stuff.length <= 1) {
 					continue;
 				}
-				xpos = Integer.parseInt(stuff[1]);
-				ypos = Integer.parseInt(stuff[2]);
-				pos = xpos + ypos * width;
-				if(pos < 0 || pos > tileObjects.length) {
-					continue;
-				}
-        		spx = xpos * bsize;
-        		spy = viewmaxy + 20;
         		animdelay = Maths.randomDouble(Constant.TWEENDELAYMIN, Constant.TWEENDELAYMAX);
 				switch(stuff[0].toLowerCase()) {
 				case "sign":
+					if(stuff.length < 3)
+						break;
+					xpos = Integer.parseInt(stuff[1]);
+					ypos = Integer.parseInt(stuff[2]);
+					pos = xpos + ypos * width;
+					if(pos < 0 || pos > tileObjects.length) {
+						continue;
+					}
+	        		spx = xpos * bsize;
+	        		spy = viewy + viewh + 20;
 	        		obj = new Sign(xpos * bsize, ypos * bsize, bsize, bsize, this);
-	        		obj.setId(num++);
 	        		obj.setAnimation(spx,spy, Constant.TWEENDURATIONPERPIXEL);
 	        		obj.delayAnimation(animdelay);
 	        		tileObjects[pos] = obj;
 	        		break;
+				case "door":
+					if(stuff.length < 4)
+						break;
+					xpos = Integer.parseInt(stuff[1]);
+					ypos = Integer.parseInt(stuff[2]);
+					pos = xpos + ypos * width;
+					if(pos < 0 || pos > tileObjects.length) {
+						continue;
+					}
+	        		spx = xpos * bsize;
+	        		spy = viewy + viewh + 20;
+	        		obj = new Door(xpos * bsize, ypos * bsize, bsize, 2 * bsize, this);
+	        		obj.setAnimation(spx, spy, Constant.TWEENDURATIONPERPIXEL);
+	        		obj.delayAnimation(animdelay);
+	        		obj.data = obj.data + "_" + stuff[3];
+	        		if(stuff.length < 5) {
+	        			((Door)obj).noGoal();
+	        		} else if(stuff.length == 5) {
+	        			((Door)obj).setGoal(myNum, stuff[4]);
+	        		} else {
+	        			((Door)obj).setGoal(Integer.parseInt(stuff[5]), stuff[4]);
+	        		}
+	        		tileObjects[pos] = obj;
+					break;
 				default:
 					break;
 				}
@@ -128,7 +164,7 @@ public class Level {
 		        	if(pos < 0 || pos > tiles.length)
 		        		continue;
 	        		spx = col * bsize;
-	        		spy = viewmaxy + 20;
+	        		spy = viewy + viewh + 20;
 	        		animdelay = Maths.randomDouble(Constant.TWEENDELAYMIN, Constant.TWEENDELAYMAX);
 		        	switch(c) {
 		        	case 'G':
@@ -160,6 +196,90 @@ public class Level {
 			//Do nothing
 			e.printStackTrace();
 		}
+	}
+	public void loadStuff() {};
+	
+	public static boolean doorExists(String file, String label) {
+		if(file == null || file == "")
+			return false;
+		if(label == null || label == "")
+			return false;
+		FileHandle fh = Gdx.files.internal(file);
+		if(!fh.exists())
+			return false;
+		try{
+			BufferedReader br = new BufferedReader(new InputStreamReader(fh.read()));
+			String line;
+			String[] stuff;
+			while((line = br.readLine()) != null) {
+				stuff = line.split("\\s+");
+				if(stuff.length <= 1)
+					continue;
+				if(!stuff[0].toLowerCase().equals("door")) {
+					continue;
+				}
+				if(stuff.length < 4)
+					continue;
+				if(stuff[3].equals(label))
+					return true;
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public static Point2D<Integer> doorLocation(String file, String label) {
+		if(file == null || file == "")
+			return null;
+		if(label == null || label == "")
+			return null;
+		FileHandle fh = Gdx.files.internal(file);
+		if(!fh.exists())
+			return null;
+		try{
+			BufferedReader br = new BufferedReader(new InputStreamReader(fh.read()));
+			String line;
+			String[] stuff;
+			while((line = br.readLine()) != null) {
+				stuff = line.split("\\s+");
+				if(stuff.length <= 1)
+					continue;
+				if(!stuff[0].toLowerCase().equals("door")) {
+					continue;
+				}
+				if(stuff.length < 4)
+					continue;
+				if(stuff[3].equals(label)){
+					return new Point2D<Integer>(Integer.parseInt(stuff[1]),
+							Integer.parseInt(stuff[2]));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public Door getDoor(String label) {
+		LevelObject obj;
+		Door d;
+		for(int i = 0; i < width * height; ++i) {
+			obj = tileObjects[i];
+			if(obj == null)
+				continue;
+			if(!(obj instanceof Door))
+				continue;
+			d = (Door) obj;
+			if(d.data.equals("door_" + label))
+				return d;
+		}
+		return null;
+	}
+	
+	public boolean goTo(int levelNum, String label) {
+		return plSt.travelToDoor(levelNum, label);
 	}
 	
 	public void update(double dt) {
@@ -195,7 +315,7 @@ public class Level {
 		}
 		if(player != null) {
 			player.update(dt);
-			adjustView(dt, player.gameleftx,player.gamerightx,player.gamebottomy,player.gametopy);
+			adjustView(dt, player);
 		}
 		if(fg != null) {
 			if(fg != bg) {
@@ -336,7 +456,8 @@ public class Level {
 		topObjects.add(obj);
 	}
 	
-	public void adjustView(double dt, double lx, double rx, double by, double ty) {
+	public void adjustView(double dt, LevelObject obj) {
+		double lx = obj.gameleftx, rx = obj.gamerightx, by = obj.gamebottomy, ty = obj.gametopy;
 		double dx,dy;
 		double leftx = viewx, rightx = leftx + vieww;
 		double bottomy = viewy, topy = bottomy + viewh;
@@ -345,8 +466,8 @@ public class Level {
 		if(player == null)
 			return;
 		
-		if(player.gameleftx < leftx + bufferx && leftx > 0) {
-			dx = player.gameleftx - (leftx + bufferx);
+		if(lx < leftx + bufferx && leftx > 0) {
+			dx = lx - (leftx + bufferx);
 			if(Math.abs(dx) < Constant.VIEW_TWEENMIN) {
 				leftx += dx;
 			} else {
@@ -354,8 +475,8 @@ public class Level {
 			}
 			leftx = Math.max(0, leftx);
 			rightx = leftx + vieww;
-		}else if(player.gamerightx > rightx - bufferx && rightx < viewmaxx) {
-			dx = player.gamerightx - (rightx - bufferx);
+		}else if(rx > rightx - bufferx && rightx < viewmaxx) {
+			dx = rx - (rightx - bufferx);
 			if(Math.abs(dx) < Constant.VIEW_TWEENMIN) {
 				rightx += dx;
 			} else {
@@ -365,27 +486,68 @@ public class Level {
 			leftx = rightx - vieww;
 		}
 		
-		if(player.gametopy > topy - buffery && topy < viewmaxy) {
-			dy = (topy - buffery) - player.gametopy;
+		if(ty > topy - buffery) {
+			dy = ty - (topy - buffery);
 			if(Math.abs(dy) < Constant.VIEW_TWEENMIN) {
 				topy += dy;
 			} else {
 				topy += dt * dy * Constant.VIEW_TWEEN;
 			}
-			topy = Math.min(topy, viewmaxy);
 			bottomy = topy - viewh;
-		} else if(player.gamebottomy < bottomy + buffery && bottomy > 0) {
-			dy = (bottomy + buffery) - player.gamebottomy;
+		} else if(by < bottomy + buffery && bottomy > 0) {
+			dy = by - (bottomy + buffery);
 			if(Math.abs(dy) < Constant.VIEW_TWEENMIN) {
 				bottomy += dy;
 			} else {
 				bottomy += dt * dy * Constant.VIEW_TWEEN;
 			}
 			bottomy = Math.max(bottomy, 0);
-			topy = bottomy + viewh;
 		}
 		viewx = leftx;
 		viewy = bottomy;
+	}
+	
+	public void focusOn(LevelObject obj) {
+		if(obj == null)
+			return;
+		double lx = obj.gameleftx, rx = obj.gamerightx, by = obj.gamebottomy, ty = obj.gametopy;
+		
+		double dx,dy;
+		double leftx = viewx, rightx = leftx + vieww;
+		double bottomy = viewy, topy = bottomy + viewh;
+		double bufferx = Constant.LEVEL_BUFFX, buffery = Constant.LEVEL_BUFFY;
+		
+		if(lx < leftx + bufferx && leftx > 0) {
+			dx = lx - (leftx + bufferx);
+			leftx += dx;
+			leftx = Math.max(0, leftx);
+			rightx = leftx + vieww;
+		}else if(rx > rightx - bufferx && rightx < viewmaxx) {
+			dx = rx - (rightx - bufferx);
+			rightx += dx;
+			rightx = Math.min(rightx, viewmaxx);
+			leftx = rightx - vieww;
+		}
+		
+		if(ty > topy - buffery) {
+			dy = ty - (topy - buffery);
+			topy += dy;
+			bottomy = topy - viewh;
+		} else if(by < bottomy + buffery && bottomy > 0) {
+			dy = by - (bottomy + buffery);
+			bottomy += dy;
+			bottomy = Math.max(bottomy, 0);
+		}
+		viewx = leftx;
+		viewy = bottomy;
+	}
+	public void centerOn(LevelObject obj) {
+		if(obj == null)
+			return;
+		double x = obj.getX(), y = obj.getY();
+		
+		viewx = Math.max(0, Math.min(x - vieww / 2, viewmaxx - vieww));
+		viewy = Math.max(0, y - viewh / 2);
 	}
 	
 	public void collideWithTilesVertical(Walkable player) {

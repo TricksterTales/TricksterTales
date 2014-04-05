@@ -13,6 +13,7 @@ public class JumpThru extends LevelObject {
 
 	public JumpThru(double x, double y, double width, double height, Level level) {
 		super(x, y, width, height, level);
+		data = "jumpThru";
 	}
 	
 	public void drawSelfAt(WorldRenderer render, double x, double y, boolean debug) {

@@ -22,6 +22,7 @@ public class Player extends Walkable {
 	private boolean canMove = true;
 	private LevelObject signOBJ = null;
 	private boolean can_attack = false, can_select = false;
+	private double selectDelay = 0, selectTimer = 0;
 	private double awayTime = 0, awayTimeDur = Constant.PLAYER_AWAYTIME;
 	
 	public Player(double x, double y, double width, double standingHeight, double duckingHeight, Level level) {
@@ -57,9 +58,6 @@ public class Player extends Walkable {
 				tryToStand = true;
 			return;
 		}
-		if(ducking == false) {
-			tryToStand = false;
-		}
 		if(ducking == true && isDucking == false) {
 			gametopy = gamebottomy + duckingHeight;
 			isDucking = true;
@@ -69,14 +67,24 @@ public class Player extends Walkable {
 		}
 		if(ducking == true)
 			tryToStand = false;
-		if(ducking == false)
+		if(ducking == false || tryToStand == true)
 			crouchTime = 0;
 	}
 	public boolean getDucking() { return isDucking; }
 	
 	public void update(double dt) {
 		tooFarAway(Constant.PLAYER_AWAYDIST, Constant.PLAYER_TOOFAR, dt);
-		can_select = touchingSomething();
+		if(selectDelay == 0) {
+			can_select = touchingSomething();
+			selectTimer = 0;
+		} else {
+			selectTimer += dt;
+			if(selectTimer >= selectDelay) {
+				selectTimer = 0;
+				selectDelay = 0;
+				can_select = touchingSomething();
+			}
+		}
 		int i = 0;
 		if(walkL == true) { i--; }
 		if(walkR == true) { i++; }
@@ -128,7 +136,8 @@ public class Player extends Walkable {
 		if(isDucking) {
 			xspeed *= crouchSpeedRatio;
 			if(onGround) {
-				crouchTime += dt;
+				if(tryToStand == false)
+					crouchTime += dt;
 				if(crouchTime >= timeToFall) {
 					if(canFallDown()) {
 						crouchTime = 0;
@@ -226,6 +235,8 @@ public class Player extends Walkable {
 		LevelObject obj = level.getTileObject(.5*(gameleftx+gamerightx), gamebottomy + 1);
 		if(obj == null)
 			return;
+		selectDelay = 0.2;
+		selectTimer = 0;
 		if(signOBJ != null && obj == signOBJ) {
 			hitENTER();
 			return;

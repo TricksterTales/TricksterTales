@@ -9,7 +9,6 @@ public class Keys {
 	public static final int KEY_UP = Input.Keys.UP;
 	public static final int KEY_DOWN = Input.Keys.DOWN;
 	public static final int KEY_JUMP = Input.Keys.SPACE;
-	public static final int KEY_RESTART = Input.Keys.R;
 	public static final int KEY_PAUSE = Input.Keys.ESCAPE;
 	public static final int KEY_SELECT = Input.Keys.ENTER;
 	public static final int KEY_ATTACK = Input.Keys.X;

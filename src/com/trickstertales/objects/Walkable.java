@@ -27,14 +27,15 @@ public class Walkable extends LevelObject {
 	
 	public Walkable(double x, double y, double width, double height, Level level) {
 		super(x,y,width,height,level);
+		data = "walkable";
 
 		hasleftside = hasrightside = hastopside = hasbottomside = false;
 	}
 	public void reset(double xpos, double ypos, double w, double h) {
 		gameleftx = xpos;
 		gamerightx = gameleftx + w;
-		gametopy = ypos;
-		gamebottomy = gametopy - h;
+		gamebottomy = ypos;
+		gametopy = gamebottomy + h;
 		xspeed = 0;
 		yspeed = 0;
 		onGround = false;

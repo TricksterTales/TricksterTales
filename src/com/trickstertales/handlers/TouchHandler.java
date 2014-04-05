@@ -1,7 +1,6 @@
 package com.trickstertales.handlers;
 
 import com.badlogic.gdx.Input.Buttons;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.trickstertales.drawing.Art;
 import com.trickstertales.gamestate.GameStateManager;
 import com.trickstertales.math.Constant;
@@ -59,8 +58,6 @@ public class TouchHandler {
 			return BUTTON_LEFT;
 		case Keys.KEY_PAUSE:
 			return BUTTON_PAUSE;
-		case Keys.KEY_RESTART:
-			return -1;
 		case Keys.KEY_RIGHT:
 			return BUTTON_RIGHT;
 		case Keys.KEY_UP:
@@ -138,7 +135,7 @@ public class TouchHandler {
 			return;
 		}
 		
-		(render.spriteBatch).end();
+		/*(render.spriteBatch).end();
 		(render.debugRenderer).setColor(Art.COLOR_TOUCHES);
 		(render.debugRenderer).begin(ShapeType.Filled);
 		Touch t;
@@ -150,7 +147,7 @@ public class TouchHandler {
 			(render.debugRenderer).ellipse((float)t.x - dx/2, (float)t.y - dy/2, dx, dy);
 		}
 		(render.debugRenderer).end();
-		(render.spriteBatch).begin();
+		(render.spriteBatch).begin();*/
 	}
 	
 	public static boolean pressed(int i) {

@@ -69,9 +69,9 @@ public class WorldRenderer {
         	Art.loadArt(false);
         }
 	}
-	
-	public WorldRenderer(boolean debug) {
-		this.debug = debug;
+
+	public WorldRenderer() {
+		this.debug = false;
 		camera = new OrthographicCamera(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 		camera.position.set(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT / 2, 0);
 		camera.update();
@@ -80,8 +80,9 @@ public class WorldRenderer {
 		hudCam.update();
 		spriteBatch = new SpriteBatch();
 	}
-	public WorldRenderer() {
-		this(false);
+	public WorldRenderer(boolean debug) {
+		this();
+		this.debug = debug;
 	}
 	
 	public void render(GameStateManager gsm) {
@@ -104,7 +105,7 @@ public class WorldRenderer {
         
         //Drawing stuff here....
         debugRenderer.begin(ShapeType.Filled);
-        debugRenderer.setColor(0.5f, 0.5f, 1.0f, 1);
+        debugRenderer.setColor(0.69f, 0.85f, 1.0f, 1);
         if(hudActive == false) {
             debugRenderer.rect((float)gsm.getX(),(float)gsm.getY(), VIRTUAL_WIDTH,VIRTUAL_HEIGHT);
         } else {

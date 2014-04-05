@@ -68,7 +68,7 @@ public class GameStateManager {
 			setState(activeState);
 		}
 	}
-	public void restartState() { setState(activeState); }
+	//public void restartState() { setState(activeState); }
 	
 	public void update(double dt) {
 		if(Constant.IS_PC == false)

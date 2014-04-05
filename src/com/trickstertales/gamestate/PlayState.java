@@ -13,6 +13,8 @@ import com.trickstertales.level.Level01;
 import com.trickstertales.math.Constant;
 import com.trickstertales.math.Keys;
 import com.trickstertales.math.Maths;
+import com.trickstertales.math.Point2D;
+import com.trickstertales.objects.Door;
 import com.trickstertales.player.Player;
 import com.trickstertales.screens.GameScreen;
 import com.trickstertales.view.WorldRenderer;
@@ -25,65 +27,24 @@ public class PlayState extends GameState {
 	public static final int KEY_UP = Keys.KEY_UP;
 	public static final int KEY_JUMP = Keys.KEY_JUMP;
 	public static final int KEY_FALL = Keys.KEY_DOWN;
-	public static final int KEY_RESTART = Keys.KEY_RESTART;
 	public static final int KEY_PAUSE = Keys.KEY_PAUSE;
 	public static final int KEY_SELECT = Keys.KEY_SELECT;
 	
+	public static final int LEVEL_FIRST = 1;
+	
+	private int curLevelNum = -1;
 	public Level curLevel;
 	public Player player;
+	
 	private boolean playerCanJump = true;
+	private boolean canHitSelect = true;
 	
 	public boolean fancyLoading = true;
-	
-	public LayerController bgs;
-	public Layer bg1;
-	
-	public LayerController fgs;
-	public CloudLayer fg1;
 	
 	public PlayState(GameScreen proj) {
 		super(proj, true);
 		
-		curLevel = new Level01();
-		double sx = Constant.PLAYER_STARTX, sy = Constant.PLAYER_STARTY;
-		if(Data.loadValue("justLoaded") == ""+true) {
-			sx = Double.parseDouble(Data.loadValue("playerx"));
-			sy = Double.parseDouble(Data.loadValue("playery"));
-			curLevel.viewx = Double.parseDouble(Data.loadValue("viewx"));
-			curLevel.viewy = Double.parseDouble(Data.loadValue("viewy"));
-		}
-		player = new Player(sx, sy, Constant.PLAYER_WIDTH, Constant.PLAYER_HEIGHT, Constant.PLAYER_HEIGHTDUCK, curLevel);
-		player.setAbsoluteAnimation(Constant.PLAYER_SPAWNX + curLevel.viewx,
-				Constant.PLAYER_SPAWNY + curLevel.viewy, Constant.PLAYERTWEEN);
-		player.delayAnimation(Constant.PLAYERTWEENDELAY);
-		curLevel.setPlayer(player);
-		
-		if(Data.loadValue("justLoaded") == ""+true) {
-			if(Data.loadValue("ducking") == ""+true) {
-				player.setDucking(true);
-				player.setDucking(false);
-			}
-			Data.saveValue("justLoaded", false);
-		}
-		
-		bgs = new LayerController();
-		bg1 = new Layer(Art.MOUNTAINS_SCALED, 0.85);
-		
-		fgs = new LayerController();
-		fg1 = new CloudLayer(10);
-		
-		bg1.loopy = false;
-		bg1.absolutey = true;
-		bg1.adjustx = Maths.randomDouble(-400, 400);
-		fg1.fillLevelWithClouds(curLevel);
-		
-		bgs.addLayer(bg1);
-		curLevel.setBackground(bgs);
-
-		fgs.addLayer(fg1);
-		curLevel.setForeground(fgs);
-		
-		fancyLoading = true;
+		loadLevel(LEVEL_FIRST);
 	}
 	
 	public void setPaused(boolean p) {
@@ -108,8 +69,31 @@ public class PlayState extends GameState {
 			player.update(dt);
 			curLevel.update(dt);
 			if(player.pastScreen()) {
-				player.resetPlayer(Constant.PLAYER_STARTX, Constant.PLAYER_STARTY,
-						Constant.PLAYER_WIDTH, Constant.PLAYER_HEIGHT);
+				double sx,sy;
+				sx = Constant.PLAYER_STARTX;
+				sy = Constant.PLAYER_STARTY;
+				String file;
+				boolean didntFind = true;
+				if(Data.hasData() && Data.keyExists("lastLevel") && Data.keyExists("lastDoor")) {
+					file = "levels/Level"+Maths.toTwoDigits(Integer.parseInt(Data.loadValue("lastLevel")))+"_Objects.txt";
+					Point2D<Integer> pos = Level.doorLocation(file, Data.loadValue("lastDoor"));
+					if(pos != null) {
+						sx = (double)(pos.xpos() + 0.5) * curLevel.blocksize - Constant.PLAYER_WIDTH / 2;
+						sy = (double)(pos.ypos() + 1) * curLevel.blocksize - Constant.PLAYER_HEIGHT / 2;
+						didntFind = false;
+					}
+				}
+				if(didntFind) {
+					file = "levels/Level"+Maths.toTwoDigits(curLevelNum)+"_Objects.txt";
+					Point2D<Integer> pos = Level.doorLocation(file, "spawn");
+					if(pos != null) {
+						sx = (double)(pos.xpos() + 0.5) * curLevel.blocksize - Constant.PLAYER_WIDTH / 2;
+						sy = (double)(pos.ypos() + 1) * curLevel.blocksize - Constant.PLAYER_HEIGHT / 2;
+						Data.saveValue("lastLevel", curLevelNum);
+						Data.saveValue("lastDoor", "spawn");
+					}
+				}
+				player.resetPlayer(sx,sy, Constant.PLAYER_WIDTH, Constant.PLAYER_HEIGHT);
 			}
 		}
 	}
@@ -133,8 +117,11 @@ public class PlayState extends GameState {
 			player.setWalkR(true);
 			break;
 		case KEY_SELECT:
-			if(keygood)
-				player.hitUP();
+			if(canHitSelect){
+				if(keygood)
+					player.hitUP();
+				canHitSelect = false;
+			}
 			break;
 		case KEY_JUMP:
 			if(playerCanJump == false) {
@@ -146,9 +133,6 @@ public class PlayState extends GameState {
 			break;
 		case KEY_FALL:
 			player.setDucking(true);
-			break;
-		case KEY_RESTART:
-			gsm.restartState();
 			break;
 		case KEY_PAUSE:
 			gsm.pause();
@@ -168,6 +152,9 @@ public class PlayState extends GameState {
 		case KEY_RIGHT:
 			player.setWalkR(false);
 			break;
+		case KEY_SELECT:
+			canHitSelect = true;
+			break;
 		case KEY_JUMP:
 			playerCanJump = true;
 			player.setJump(false);
@@ -178,6 +165,146 @@ public class PlayState extends GameState {
 			//Nothing
 			return;
 		}
+	}
+	
+	public boolean travelToDoor(int lvlnum, String label) {
+		if(!levelExists(lvlnum))
+			return false;
+		String file = "levels/Level"+Maths.toTwoDigits(lvlnum)+"_Objects.txt";
+		if(!Level.doorExists(file, label))
+			return false;
+		gotoLevel(lvlnum, label);
+		return true;
+	}
+	
+	private void gotoLevel(int lvlnum, String label) {
+		boolean switchedLevels = (curLevelNum != lvlnum);
+		if(lvlnum != curLevelNum)
+			loadLevel(lvlnum);
+		Door d = curLevel.getDoor(label);
+		if(d == null)
+			return;
+		player.setPosition(d.getX(), d.getY());
+		Data.saveValue("lastLevel", lvlnum);
+		Data.saveValue("lastDoor", label);
+		if(switchedLevels)
+			curLevel.centerOn(player);
+	}
+	
+	private boolean levelExists(int lvlnum) {
+		if(lvlnum == 1)
+			return true;
+		return false;
+	}
+	
+	private void loadLevel(int lvlNum) {
+		switch(lvlNum) {
+		case 1:
+			LayerController bgs;
+			Layer bg1;
+			LayerController fgs;
+			CloudLayer fg1;
+			
+			curLevel = new Level01(this, lvlNum);
+			boolean focus = false;
+			if(player == null) {
+				focus = initPlayer(lvlNum);
+			} else {
+				focus = startPlayer(lvlNum);
+			}
+			curLevel.setPlayer(player);
+			if(focus)
+				curLevel.focusOn(player);
+			
+			if(Data.hasData()) {
+				if(Data.keyExists("ducking") && Data.loadValue("ducking").equals("true")) {
+					player.setDucking(true);
+					player.setDucking(false);
+				}
+			}
+			
+			bgs = new LayerController();
+			bg1 = new Layer(Art.MOUNTAINS_SCALED, 0.85);
+			
+			fgs = new LayerController();
+			fg1 = new CloudLayer(10);
+			
+			bg1.loopy = false;
+			bg1.absolutey = true;
+			bg1.adjustx = Maths.randomDouble(-400, 400);
+			fg1.fillLevelWithClouds(curLevel);
+			
+			bgs.addLayer(bg1);
+			curLevel.setBackground(bgs);
+
+			fgs.addLayer(fg1);
+			curLevel.setForeground(fgs);
+			
+			curLevel.loadStuff();
+			fancyLoading = true;
+			break;
+		default:
+			if(curLevelNum == -1)
+				loadLevel(LEVEL_FIRST);
+			return;
+		}
+		curLevelNum = lvlNum;
+	}
+	
+	private boolean initPlayer(int lvlNum) {
+		if(!levelExists(lvlNum))
+			lvlNum = LEVEL_FIRST;
+		double sx = Constant.PLAYER_STARTX,sy = Constant.PLAYER_STARTY;
+		boolean focus = false;
+		if(Data.hasData()) {
+			sx = Data.keyExists("playerx")?Double.parseDouble(Data.loadValue("playerx")):sx;
+			sy = Data.keyExists("playery")?Double.parseDouble(Data.loadValue("playery")):sy;
+			curLevel.viewx = Data.keyExists("viewx")?Double.parseDouble(Data.loadValue("viewx")):curLevel.viewx;
+			curLevel.viewy = Data.keyExists("viewy")?Double.parseDouble(Data.loadValue("viewy")):curLevel.viewy;
+		} else {
+			String file = "levels/Level"+Maths.toTwoDigits(lvlNum)+"_Objects.txt";
+			Point2D<Integer> pos = Level.doorLocation(file, "spawn");
+			if(pos != null) {
+				sx = (double)(pos.xpos() + 0.5) * curLevel.blocksize - Constant.PLAYER_WIDTH / 2;
+				sy = (double)(pos.ypos() + 1) * curLevel.blocksize - Constant.PLAYER_HEIGHT / 2;
+				Data.saveValue("lastLevel", lvlNum);
+				Data.saveValue("lastDoor", "spawn");
+				focus = true;
+			}
+		}
+		player = new Player(sx, sy, Constant.PLAYER_WIDTH, Constant.PLAYER_HEIGHT, Constant.PLAYER_HEIGHTDUCK, curLevel);
+		player.setAbsoluteAnimation(Constant.PLAYER_SPAWNX + curLevel.viewx,
+				Constant.PLAYER_SPAWNY + curLevel.viewy, Constant.PLAYERTWEEN);
+		player.delayAnimation(Constant.PLAYERTWEENDELAY);
+		return focus;
+	}
+	
+	private boolean startPlayer(int lvlNum) {
+		if(!levelExists(lvlNum))
+			lvlNum = LEVEL_FIRST;
+		double sx = Constant.PLAYER_STARTX, sy = Constant.PLAYER_STARTY;
+		boolean focus = false;
+		if(Data.hasData()) {
+			sx = Data.keyExists("playerx")?Double.parseDouble(Data.loadValue("playerx")):sx;
+			sy = Data.keyExists("playery")?Double.parseDouble(Data.loadValue("playery")):sy;
+			sx += Constant.PLAYER_WIDTH / 2;
+			sy += Constant.PLAYER_HEIGHT / 2;
+		} else {
+			String file = "levels/Level"+Maths.toTwoDigits(lvlNum)+"_Objects.txt";
+			Point2D<Integer> pos = Level.doorLocation(file, "spawn");
+			if(pos != null) {
+				sx = (double)(pos.xpos() + 0.5) * curLevel.blocksize;
+				sy = (double)(pos.ypos() + 1) * curLevel.blocksize;
+				Data.saveValue("lastLevel", lvlNum);
+				Data.saveValue("lastDoor", "spawn");
+				focus = true;
+			} else {
+				sx = Constant.PLAYER_STARTX;
+				sy = Constant.PLAYER_STARTY;
+			}
+		}
+		player.setPosition(sx, sy);
+		return focus;
 	}
 
 }

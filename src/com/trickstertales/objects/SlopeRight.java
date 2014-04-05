@@ -13,6 +13,7 @@ public class SlopeRight extends LevelObject {
 
 	public SlopeRight(double x, double y, double width, double height, Level level) {
 		super(x, y, width, height, level);
+		data = "slopeRight";
 	}
 	
 	public void drawSelfAt(WorldRenderer render, double x, double y, boolean debug) {

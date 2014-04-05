@@ -6,6 +6,7 @@ import com.trickstertales.drawing.Art;
 import com.trickstertales.exceptions.NoCollisionException;
 import com.trickstertales.exceptions.SlopeAdjustFailed;
 import com.trickstertales.level.Level;
+import com.trickstertales.math.Maths;
 import com.trickstertales.math.Tween;
 import com.trickstertales.view.WorldRenderer;
 
@@ -23,8 +24,10 @@ public class LevelObject {
 	protected boolean isOffScreen = false, shouldDie = false;
 	protected boolean canceled = true;
 	protected int _id = -1;
+	public String data = "";
 	
 	public LevelObject(double x, double y, double width, double height, Level level) {
+		_id = Maths.nextId();
 		animleftx = gameleftx = x;
 		gamerightx = gameleftx + width;
 		animbottomy = gamebottomy = y;
@@ -52,8 +55,23 @@ public class LevelObject {
 		animationDuration = duration;
 	}
 	
-	public void setId(int id) { _id = id; }
 	public int getId() { return _id; }
+	
+	public void setPosition(double xpos, double ypos) {
+		double w = gamerightx - gameleftx;
+		double h = gametopy - gamebottomy;
+		gameleftx = xpos - w / 2;
+		gamerightx = gameleftx + w;
+		gamebottomy = ypos - h / 2;
+		gametopy = gamebottomy + h;
+	}
+	
+	public double getX() {
+		return (gameleftx + gamerightx) / 2;
+	}
+	public double getY() {
+		return (gamebottomy + gametopy) / 2;
+	}
 	
 	public boolean clicked() {
 		if(!canceled)

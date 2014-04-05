@@ -11,6 +11,7 @@ public class Ground extends LevelObject {
 
 	public Ground(double x, double y, double width, double height, Level level) {
 		super(x, y, width, height, level);
+		data = "ground";
 	}
 	
 	public void drawSelfAt(WorldRenderer render, double x, double y, boolean debug) {

@@ -7,6 +7,7 @@ public class Maths {
 
 	private static long seedNum = System.currentTimeMillis();
 	private static Random random = new Random(seedNum);
+	private static int curId = 0;
 	
 	public static boolean isOnList(LinkedList<Long> list, long value) {
 		for(Long l : list) {
@@ -30,6 +31,8 @@ public class Maths {
 	public static String toString(int val) {
 		return "" + val;
 	}
+	
+	public static int nextId() { return ++curId; }
 	
 	public static String wordWrap(String str, int lineWidth) {
 		if(str == "")
