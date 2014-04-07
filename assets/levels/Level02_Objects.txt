@@ -1,2 +1,3 @@
-Door 27 10 goal spawn 1
-Door 1 1 spawn goal
+Sign 15 1 When we have falling damage, test it here
+Door 20 16 goal spawn 1
+Door 22 1 spawn

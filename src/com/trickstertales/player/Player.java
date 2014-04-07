@@ -235,7 +235,7 @@ public class Player extends Walkable {
 		LevelObject obj = level.getTileObject(.5*(gameleftx+gamerightx), gamebottomy + 1);
 		if(obj == null)
 			return;
-		selectDelay = 0.2;
+		selectDelay = ((isDucking)?0.5:0.2);
 		selectTimer = 0;
 		if(signOBJ != null && obj == signOBJ) {
 			hitENTER();

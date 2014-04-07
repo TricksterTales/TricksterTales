@@ -126,5 +126,32 @@ public class Maths {
 		
 		return product;
 	}
+	
+	public static String getStuffAfterArgument(String line, int argn) {
+		if(argn < 0)
+			return "";
+		if(argn == 0)
+			return "";
+		char ch;
+		boolean onGap = false;
+		int gaps = 0, len = line.length();
+		for(int i = 0; i < len; ++i) {
+			ch = line.charAt(i);
+			if(Character.isWhitespace(ch)) {
+				if(onGap == false) {
+					++gaps;
+					onGap = true;
+				}
+				continue;
+			}
+			if(onGap == true) {
+				if(gaps == 3) {
+					return line.substring(i);
+				}
+				onGap = false;
+			}
+		}
+		return "";
+	}
 
 }

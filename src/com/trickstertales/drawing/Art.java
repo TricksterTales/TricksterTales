@@ -18,7 +18,7 @@ import com.trickstertales.view.WorldRenderer;
 
 public class Art {
 	
-	public static final double scaleHD = 1.45;
+	public static final double scaleHD = 2.0;
 	public static float PPI = 1.0f;
 	
 	private static int strokeWidth = 1;

@@ -268,6 +268,16 @@ public class PlayState extends GameState {
 			curLevel.setPlayer(player);
 			if(focus)
 				curLevel.focusOn(player);
+			
+			bgs = new LayerController();
+			bg1 = new Layer(Art.MOUNTAINS_SCALED, 0.85);
+			
+			bg1.loopy = false;
+			bg1.absolutey = false;
+			bg1.adjustx = Maths.randomDouble(-400, 400);
+			
+			bgs.addLayer(bg1);
+			curLevel.setBackground(bgs);
 			break;
 		default:
 			if(curLevelNum == -1)

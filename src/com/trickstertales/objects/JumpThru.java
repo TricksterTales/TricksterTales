@@ -53,5 +53,9 @@ public class JumpThru extends LevelObject {
 	public double slopeAdjust(double lx, double rx, double by, double ty, int side, double max) throws SlopeAdjustFailed {
 		return 0;
 	}
+	
+	public boolean isCollidingWith(double lx, double rx, double by, double ty) {
+		return false;
+	}
 
 }

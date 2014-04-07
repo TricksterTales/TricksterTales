@@ -48,13 +48,13 @@ public class Level {
 	private PlayState plSt;
 	private final int myNum;
 	
-	public Level(PlayState ps, int lvlNum, int width, int height, int blocksize) {
+	public Level(PlayState ps, int lvlNum, int width, int height) {
 		plSt = ps;
 		myNum = lvlNum;
 		
 		this.width = width;
 		this.height = height;
-		this.blocksize = blocksize;
+		this.blocksize = Constant.BLOCK_SIZE;
 		tiles = new LevelObject[width * height];
 		tileObjects = new LevelObject[width * height];
 		objects = new LinkedList<LevelObject>();
@@ -83,41 +83,43 @@ public class Level {
 		try {
 			InputStream in = (Gdx.files.internal(file)).read();
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			String line;
+			String line, msg;
 			String[] stuff;
 			int xpos,ypos,pos,bsize = this.blocksize;
 			double spx,spy,animdelay;
 			LevelObject obj;
 			while((line = br.readLine()) != null) {
 				stuff = line.split("\\s+");
-				if(stuff.length <= 1) {
+				if(stuff.length < 3) {	//What, x, y
 					continue;
 				}
         		animdelay = Maths.randomDouble(Constant.TWEENDELAYMIN, Constant.TWEENDELAYMAX);
 				switch(stuff[0].toLowerCase()) {
 				case "sign":
-					if(stuff.length < 3)
-						break;
-					xpos = Integer.parseInt(stuff[1]);
-					ypos = Integer.parseInt(stuff[2]);
-					pos = xpos + ypos * width;
-					if(pos < 0 || pos > tileObjects.length) {
-						continue;
-					}
-	        		spx = xpos * bsize;
-	        		spy = viewy + viewh + 20;
-	        		obj = new Sign(xpos * bsize, ypos * bsize, bsize, bsize, this);
-	        		obj.setAnimation(spx,spy, Constant.TWEENDURATIONPERPIXEL);
-	        		obj.delayAnimation(animdelay);
-	        		tileObjects[pos] = obj;
-	        		break;
-				case "door":
 					if(stuff.length < 4)
 						break;
 					xpos = Integer.parseInt(stuff[1]);
 					ypos = Integer.parseInt(stuff[2]);
 					pos = xpos + ypos * width;
-					if(pos < 0 || pos > tileObjects.length) {
+					if(xpos < 0 || xpos >= width || ypos < 0 || ypos >= height) {
+						continue;
+					}
+					msg = Maths.getStuffAfterArgument(line, 3);
+	        		spx = xpos * bsize;
+	        		spy = viewy + viewh + 20;
+	        		obj = new Sign(xpos * bsize, ypos * bsize, bsize, bsize, this);
+	        		obj.setAnimation(spx,spy, Constant.TWEENDURATIONPERPIXEL);
+	        		obj.delayAnimation(animdelay);
+	        		((Sign)obj).setMessage(msg);
+	        		tileObjects[pos] = obj;
+	        		break;
+				case "door":
+					if(stuff.length < 4 || stuff.length > 6)
+						break;
+					xpos = Integer.parseInt(stuff[1]);
+					ypos = Integer.parseInt(stuff[2]);
+					pos = xpos + ypos * width;
+					if(xpos < 0 || xpos >= width || ypos < 0 || ypos >= height) {
 						continue;
 					}
 	        		spx = xpos * bsize;
@@ -126,7 +128,7 @@ public class Level {
 	        		obj.setAnimation(spx, spy, Constant.TWEENDURATIONPERPIXEL);
 	        		obj.delayAnimation(animdelay);
 	        		obj.data = obj.data + "_" + stuff[3];
-	        		if(stuff.length < 5) {
+	        		if(stuff.length == 4) {
 	        			((Door)obj).noGoal();
 	        		} else if(stuff.length == 5) {
 	        			((Door)obj).setGoal(myNum, stuff[4]);

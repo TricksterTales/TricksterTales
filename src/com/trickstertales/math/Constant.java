@@ -27,7 +27,6 @@ public class Constant {
 	public static final int BLOCK_SIZE = 32;
 	
 	public static final int LEVEL_FRAMEDELAY = 3;
-	public static final int LEVEL_HEIGHT = (int)Math.ceil(APPLET_HEIGHT / BLOCK_SIZE);
 	public static final int LEVEL_VIEWW = APPLET_WIDTH;
 	public static final int LEVEL_VIEWH = APPLET_HEIGHT;
 	public static final int LEVEL_BUFFX = (int)(LEVEL_VIEWW / 3);
